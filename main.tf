@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "myRG" {
-  name = "myRG"
+  name = var.resource_group_name
   location = "Central India"
 }
 
@@ -7,14 +7,14 @@ resource "azurerm_virtual_network" "my_VN" {
   name = "example-network"
   location = azurerm_resource_group.myRG.location
   resource_group_name = azurerm_resource_group.myRG.name
-  address_space = [ "192.168.0.0/16" ]
+  address_space = var.vnet_cidr_block
 }
 
 resource "azurerm_subnet" "my_subnet" {
   name                 = "example-subnet"
   resource_group_name  = azurerm_resource_group.myRG.name
   virtual_network_name = azurerm_virtual_network.my_VN.name
-  address_prefixes     = ["192.168.1.0/24"]
+  address_prefixes     = var.subnet_cidr_block
 }
 
 resource "azurerm_network_security_group" "my_NSG" {
@@ -27,7 +27,7 @@ resource "azurerm_network_security_group" "my_NSG" {
     direction = "Inbound"
     access = "Allow"
     protocol = "Tcp"
-    source_port_range          = 22
+    source_port_range          = "*"
     destination_port_range     = 22
     source_address_prefix      = "*"
     destination_address_prefix = "*"
@@ -62,13 +62,13 @@ resource "azurerm_linux_virtual_machine" "myVM" {
   name                            = "myVM" 
   resource_group_name             = azurerm_resource_group.myRG.name 
   location                        = azurerm_resource_group.myRG.location
-  size                            = "Standard_B1s" 
-  admin_username                  = "azureuser" 
-  admin_password                  = "P@ssw0rd1234!" 
+  size                            = var.vm_size
+  admin_username                  = var.admin_username
+  admin_password                  = var.admin_password 
   disable_password_authentication = false 
 
   network_interface_ids = [ 
-    azurerm_network_interface.myNIC.id, 
+    azurerm_network_interface.my_NIC.id 
   ] 
 
   os_disk { 
@@ -77,9 +77,9 @@ resource "azurerm_linux_virtual_machine" "myVM" {
   } 
 
   source_image_reference { 
-    publisher = "Canonical" 
-    offer     = "UbuntuServer" 
-    sku       = "18.04-LTS" 
-    version   = "latest" 
+    publisher = var.image_publisher
+    offer     = var.image_offer 
+    sku       = var.image_sku
+    version   = var.image_version
   } 
  } 

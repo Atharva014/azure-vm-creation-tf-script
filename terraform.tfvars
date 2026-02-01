@@ -1,0 +1,11 @@
+resource_group_name = "myRG"
+location = "Central India"
+vnet_cidr_block = [ "192.168.0.0/16" ]
+subnet_cidr_block = [ "192.168.1.0/24" ]
+vm_size = "Standard_D2als_v6"
+admin_username = "azureuser"
+admin_password = "Azureuser@123"
+image_publisher = "Canonical"
+image_offer = "0001-com-ubuntu-server-jammy"
+image_sku = "22_04-lts-gen2"
+image_version = "latest"
